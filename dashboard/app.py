@@ -14,6 +14,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
+## Based on https://pythonbasics.org/flask-sqlalchemy/
 class schools(db.Model):
     unitid = db.Column(db.integer)
     school = db.Column(db.String(100))
