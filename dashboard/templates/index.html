@@ -9,11 +9,15 @@
 <body>
     <h1>Hi.</h1>
     <p>Paragraph stuff.</p>
-
+    <!-- https://stackoverflow.com/questions/52644035/how-to-show-a-pandas-dataframe-into-a-existing-flask-html-table -->
     {% for table in tables %} 
         {{titles[loop.index]}}
         {{table|safe}}
     {% endfor %}
    
+    <!-- adapted from: ttps://www.geeksforgeeks.org/retrieving-html-from-data-using-flask/ -->
+    <form action="{{url_for("search")}}" method="post">
+        <input type="text" id="school_name" name="school_name" placeholder="Search for schools.">
+        <button type="submit">Search</button>
 </body>
 </html>

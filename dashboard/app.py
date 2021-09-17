@@ -17,17 +17,22 @@ host = 'ec2-54-83-137-206.compute-1.amazonaws.com'
 db = 'dc995n2umb789o'
 
 engine = create_engine(f'postgresql+psycopg2://{username}:{password}@{host}/{db}')
-engine.table_names()
 
-school = "Alabama"
-
-df = pd.read_sql_query(f"select * from school_geo where institution_name ilike '%%{school}%%'", con=engine).head()
-
-
-
+#adapted from: https://stackoverflow.com/questions/52644035/how-to-show-a-pandas-dataframe-into-a-existing-flask-html-table
 @app.route("/", methods=("POST", "GET"))
 def home():
+    school = ''
+    df = pd.read_sql_query(f"select * from school_geo where institution_name ilike '%%{school}%%'", con=engine)
     return render_template("index.html", tables = [df.to_html(classes='data')], titles = df.columns.values)
+
+def search():
+    if request.method == "POST":
+       # getting input with name = school_name in HTML form
+       school = request.form.get("school_name")
+    
+    df = pd.read_sql_query(f"select * from school_geo where institution_name ilike '%%{school}%%'", con=engine)
+    return render_template("index.html", tables = [df.to_html(classes='data')], titles = df.columns.values)
+
 
 if __name__ == "__main__":
     app.run()    
