@@ -28,7 +28,8 @@ def home():
        return render_template("index.html", tables = [df.to_html(classes='data')], titles = df.columns.values)
     
     else:
-        df = pd.Dataframe()
+        school = "George Washington"
+        df = pd.read_sql_query(f"select * from school_geo where institution_name ilike '%%{school}%%'", con=engine)
         return render_template("index.html", tables = [df.to_html(classes='data')], titles = df.columns.values)
 
     
