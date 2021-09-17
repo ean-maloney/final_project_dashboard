@@ -1,38 +1,32 @@
 import os
 from flask import(
-    Flask, render_template, jsonify, request, redirect
+    Flask, render_template, request, redirect, session
 )
+from flask_sqlalchemy import SQLAlchemy
+import pandas as pd
+import psycopg2
 
+#Initialize app
 app = Flask(__name__)
 
-from flask_sqlalchemy import SQLAlchemy
+#Query code
+username = 'godenmyqjrmzoe'
+password = '673e2f643ed4ddbe58c111219261e6872457e45e34e34c617efa029f10429c0f'
+host = 'ec2-54-83-137-206.compute-1.amazonaws.com'
+db = 'dc995n2umb789o'
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', '') or "sqlite:///db.sqlite"
+engine = create_engine(f'postgresql+psycopg2://{username}:{password}@{host}/{db}')
+engine.table_names()
 
-# Remove tracking modifications
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+school = "Alabama"
 
-db = SQLAlchemy(app)
-
-# ## Based on https://pythonbasics.org/flask-sqlalchemy/
-# class schools(db.Model):
-#     unitid = db.Column(db.integer)
-#     school = db.Column(db.String(100))
-#     lat = db.Column(db.String(10))
-#     lon = db.Column(db.String(10))
-#     region = db.Column(db.String(3))
-#     nearest_mlb = db.Column(db.String(50))
-#     nearest_mlb_dist = db.Column(db.String(5))
-#     nearest_nba = db.Column(db.String(50))
-#     nearest_nba_dist = db.Column(db.String(50))
+df = pd.read_sql_query(f"select * from school_geo where institution_name ilike '%%{school}%%'", con=engine).head()
 
 
 
-### Import class object?? ###
-
-@app.route("/")
+@app.route("/", methods=("POST", "GET"))
 def home():
-    return render_template("index.html")
+    return render_template("index.html", tables = [df.to_html(classes='data')], titles = df.columns.values)
 
 if __name__ == "__main__":
     app.run()    
